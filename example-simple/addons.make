@@ -1,3 +1,4 @@
 ofxCv
+ofxDlib
 ofxFaceTracker2
 ofxOpenCv

@@ -24,7 +24,7 @@ meta:
 common:
 	# dependencies with other addons, a list of them separated by spaces
 	# or use += in several lines
-	ADDON_DEPENDENCIES = ofxCv
+	ADDON_DEPENDENCIES = ofxCv ofxDlib
 
 	# include search paths, this will be usually parsed from the file system
 	# but if the addon or addon libraries need special search paths they can be
@@ -56,33 +56,3 @@ common:
 	# some addons need resources to be copied to the bin/data folder of the project
 	# specify here any files that need to be copied, you can use wildcards like * and ?
 	ADDON_DATA = model/
-
-
-	# when parsing the file system looking for libraries exclude this for all or
-	# a specific platform
-	# ADDON_LIBS_EXCLUDE =
-
-	# when parsing the file system looking for sources exclude this for all or
-	# a specific platform
-	ADDON_SOURCES_EXCLUDE = libs/dlib/include/%
-
-	# when parsing the file system looking for include paths exclude this for all or
-	# a specific platform
-	ADDON_INCLUDES_EXCLUDE = libs/dlib/include/%
-
-	ADDON_INCLUDES = libs/dlib/include/
-	ADDON_INCLUDES += src
-
-osx:
-	ADDON_LIBS = libs/dlib/lib/osx/libdlib.a
-
-android/armeabi-v7a:
-	ADDON_LIBS = libs/dlib/lib/android/armeabi-v7a/libdlib.a
-
-android/x86:
-	ADDON_LIBS = libs/dlib/lib/android/x86/libdlib.a
-
-vs:
-	ADDON_LIBS = libs/dlib/lib/win/Release/dlib.lib
-
-
