@@ -67,6 +67,9 @@ vector<int> ofxFaceTracker2Landmarks::getFeatureIndices(Feature feature) {
         }
         case ALL_FEATURES: return consecutive(0, 68);
     }
+
+    ofLogError() << "Unknown feature.";
+    return std::vector<int>();
 }
 
 
