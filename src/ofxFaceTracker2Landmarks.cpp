@@ -1,4 +1,6 @@
 #include "ofxFaceTracker2Landmarks.h"
+#include "ofMesh.h"
+
 using namespace std;
 
 ofxFaceTracker2Landmarks::ofxFaceTracker2Landmarks(dlib::full_object_detection shape, ofxFaceTracker2InputInfo & info) : shape(shape), info(info){
