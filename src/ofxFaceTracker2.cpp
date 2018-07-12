@@ -48,16 +48,16 @@ void ofxFaceTracker2::setup(string dataPath) {
                                  <<"Please download and extract it from http://sourceforge.net/projects/dclib/files/dlib/v18.10/shape_predictor_68_face_landmarks.dat.bz2";
 		throw;
 	}
-    
+
 	thread_fps = 0;
-    
-    
+
+
 
 	// Start the background thread
 	if(threaded){
 		startThread();
 	}
-    
+
     // Setup tracker keeping persistent id's of rectangles
     faceRectanglesTracker.setMaximumDistance(200);
 }
@@ -91,7 +91,7 @@ void ofxFaceTracker2::exitEvent(ofEventArgs& e){
 
 bool ofxFaceTracker2::update(Mat image, cv::Rect _roi) {
 	clock_t start = clock() ;
-    
+
     // Prepare image, resize if required
 	float aspect = (float)image.rows/image.cols;
 	if(landmarkDetectorImageSize == -1 || image.rows*image.cols <= landmarkDetectorImageSize) {
@@ -100,7 +100,7 @@ bool ofxFaceTracker2::update(Mat image, cv::Rect _roi) {
 		float scale = sqrt((float) landmarkDetectorImageSize / (image.rows*image.cols));
 		resize(image, im, cv::Size(), scale,scale, cv::INTER_NEAREST);
 	}
-    
+
     // Rotate image if required
 	if(imageRotation){
 		rotate_90n(im, im, imageRotation);
@@ -125,8 +125,8 @@ bool ofxFaceTracker2::update(Mat image, cv::Rect _roi) {
         cvtColor(im, gray, CV_RGB2GRAY);
     }
 	imageDirty = true;
-    
-    
+
+
     // If the tracker runs without background thread, then run face detector now
     if(!threaded){
         runFaceDetector(false);
@@ -146,12 +146,12 @@ void ofxFaceTracker2::threadedFunction(){
 	while(isThreadRunning()) {
 		if(imageDirty){
             clock_t start = clock() ;
-            
+
             imageDirty = false;
-            
+
             // Run the detector
             runFaceDetector(true);
-            
+
             // Calculate thread fps
             clock_t end = clock() ;
             double elapsed_time = (end-start)/(double)CLOCKS_PER_SEC ;
@@ -166,17 +166,17 @@ void ofxFaceTracker2::threadedFunction(){
 
 void ofxFaceTracker2::runFaceDetector(bool lockMutex){
     cv::Rect detectorRoi;
-    
+
     // Prepare image for face detection
     if(lockMutex) mutex.lock();
-    
+
     // Make sure roi is within boundaries
     detectorRoi =       roi;
     detectorRoi.x =     (int) ofClamp(detectorRoi.x, 0, gray.cols);
     detectorRoi.y =     (int) ofClamp(detectorRoi.y, 0, gray.rows);
     detectorRoi.width = (int) ofClamp(detectorRoi.width, 1, gray.cols - detectorRoi.x);
     detectorRoi.height= (int) ofClamp(detectorRoi.height,1, gray.rows - detectorRoi.y);
-    
+
     float scale = 1;
 
     // If there is no resize, or if image is below max face detector pixel size, then just crop to ROI size
@@ -188,15 +188,15 @@ void ofxFaceTracker2::runFaceDetector(bool lockMutex){
         scale = sqrt((float) faceDetectorImageSize / (detectorRoi.width*detectorRoi.height));
         resize(gray(detectorRoi), threadGray, cv::Size(), scale, scale, cv::INTER_NEAREST);
     }
-    
+
     if(lockMutex) mutex.unlock();
-    
+
     // Run face detector (the slow part)
     dlib::cv_image<unsigned char> cvimg(threadGray);
     std::vector<dlib::rectangle> detectedFaceRectangles = faceDetector(cvimg);
-    
+
     if(lockMutex) mutex.lock();
-    
+
     vector<cv::Rect> rects;
     // Store face detector data
     float s = 1.0f/scale;
@@ -207,7 +207,7 @@ void ofxFaceTracker2::runFaceDetector(bool lockMutex){
                                  rect.height() * s));
     }
     faceRectanglesTracker.track(rects);
-    
+
     if(lockMutex) mutex.unlock();
 }
 
@@ -222,17 +222,17 @@ void ofxFaceTracker2::runLandmarkDetector(){
         dlib::cv_image<unsigned char> dlibimg(gray);
 
         instances.reserve(faceRectanglesTracker.getCurrentLabels().size());
-        
+
         for(auto label : faceRectanglesTracker.getCurrentLabels()){
             auto cvrect = faceRectanglesTracker.getCurrent(label);
             auto rect = dlib::rectangle(cvrect.x, cvrect.y, cvrect.x + cvrect.width, cvrect.y + cvrect.height);
-            
+
             // Do the actual landmark detection
             dlib::full_object_detection shape = landmarkDetector(dlibimg, rect);
 
             instances.push_back(ofxFaceTracker2Instance(label, shape, rect, info));
         }
-        
+
         failed = false;
         numFaces = faceRectanglesTracker.getCurrentLabels().size();
     }
@@ -257,23 +257,23 @@ void ofxFaceTracker2::drawDebug(int x, int y, int _w, int _h) const{
     if(failed) {
         return;
     }
-    
+
     ofPushMatrix();
     ofPushStyle(); {
-        
+
         ofTranslate(x,y);
-        
+
         if(ofGetRectMode() == OF_RECTMODE_CENTER){
             ofTranslate(-_w/2, -_h/2);
         }
-        
+
         if(_w != info.inputWidth || _h != info.inputHeight){
             ofScale((float)_w/info.inputWidth, (float)_h/info.inputHeight);
         }
-        
+
         for (auto instance : getInstances()){
             ofNoFill();
-            
+
             instance.getLandmarks().getImageFeature(ofxFaceTracker2Landmarks::LEFT_EYE).draw();
             instance.getLandmarks().getImageFeature(ofxFaceTracker2Landmarks::RIGHT_EYE).draw();
             instance.getLandmarks().getImageFeature(ofxFaceTracker2Landmarks::LEFT_EYEBROW).draw();
@@ -283,19 +283,19 @@ void ofxFaceTracker2::drawDebug(int x, int y, int _w, int _h) const{
             instance.getLandmarks().getImageFeature(ofxFaceTracker2Landmarks::INNER_MOUTH).draw();
             instance.getLandmarks().getImageFeature(ofxFaceTracker2Landmarks::OUTER_MOUTH).draw();
             instance.getLandmarks().getImageFeature(ofxFaceTracker2Landmarks::JAW).draw();
-            
+
             auto rect = instance.getBoundingBox();
             auto p = rect.getTopLeft();
             ofSetColor(255);
             ofDrawBitmapStringHighlight("face "+ofToString(instance.getLabel()), p.x+4, p.y+14);
-            
+
             ofPushStyle();
             ofSetColor(255,0,0);
             ofNoFill();
             ofDrawRectangle(rect);
             ofPopStyle();
         }
-        
+
     } ofPopStyle();
     ofPopMatrix();
 }
@@ -305,7 +305,7 @@ void ofxFaceTracker2::drawDebugPose() {
         ofPushView();
         ofPushStyle();
         instance.loadPoseMatrix();
-        
+
         ofSetColor(255,0,0);
         ofDrawLine(0,0,0, 100,0,0);
         ofSetColor(0,255,0);

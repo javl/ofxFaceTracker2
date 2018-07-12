@@ -13,7 +13,7 @@ ofVec2f ofxFaceTracker2Landmarks::getImagePoint(int i) const {
     ofVec3f p = ofVec3f(shape.part(i).x(),
                         shape.part(i).y(), 0);
     p = p * info.rotationMatrix;
-    
+
     return ofVec2f(p);
 }
 
@@ -67,6 +67,9 @@ vector<int> ofxFaceTracker2Landmarks::getFeatureIndices(Feature feature) {
         }
         case ALL_FEATURES: return consecutive(0, 68);
     }
+
+    ofLogError() << "Unknown feature.";
+    return std::vector<int>();
 }
 
 
@@ -90,7 +93,7 @@ ofPolyline ofxFaceTracker2Landmarks::getFeature(Feature feature, vector<T> point
         default:
             break;
     }
-    
+
     return polyline;
 }
 
@@ -107,27 +110,27 @@ template <class T>
 ofMesh ofxFaceTracker2Landmarks::getMesh(vector<T> points) const {
     cv::Rect rect(0, 0, info.inputWidth, info.inputHeight);
     cv::Subdiv2D subdiv(rect);
-    
+
     for(int i=0;i<points.size();i++){
         if( rect.contains(points[i]) ){
             subdiv.insert(points[i]);
         }
     }
-    
+
     vector<cv::Vec6f> triangleList;
     subdiv.getTriangleList(triangleList);
-    
+
     ofMesh mesh;
     mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-    
+
     for( size_t i = 0; i < triangleList.size(); i++ )
     {
         cv::Vec6f t = triangleList[i];
-        
+
         cv::Point2f pt1 = cv::Point(cvRound(t[0]), cvRound(t[1]));
         cv::Point2f pt2 = cv::Point(cvRound(t[2]), cvRound(t[3]));
         cv::Point2f pt3 = cv::Point(cvRound(t[4]), cvRound(t[5]));
-        
+
         // Draw rectangles completely inside the image.
         if ( rect.contains(pt1) && rect.contains(pt2) && rect.contains(pt3))
         {
@@ -142,6 +145,6 @@ ofMesh ofxFaceTracker2Landmarks::getMesh(vector<T> points) const {
         }
     }
     return mesh;
-    
+
 }
 

@@ -8,6 +8,7 @@
 
 #include "ofMain.h"
 #include "ofxFaceTracker2.h"
+#include "ofxDlib.h"
 
 class ofApp : public ofBaseApp{
 public:
