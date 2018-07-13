@@ -36,6 +36,8 @@ public:
 
     /// Get poly line of a feature
     ofPolyline getImageFeature(Feature feature) const;
+    /// draw points of featuge
+    void drawImageFeature(Feature feature) const;
 
     ofMesh getImageMesh() const;
 
@@ -50,5 +52,8 @@ private:
 
     template <class T>
     ofPolyline getFeature(Feature feature,  std::vector<T> points) const;
+
+    template <class T>
+    void drawFeature(Feature feature,  std::vector<T> points) const;
 
 };

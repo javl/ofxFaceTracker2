@@ -41,6 +41,10 @@ ofPolyline ofxFaceTracker2Landmarks::getImageFeature(Feature feature) const {
     return getFeature(feature, getImagePoints());
 }
 
+void ofxFaceTracker2Landmarks::drawImageFeature(Feature feature) const {
+    drawFeature(feature, getImagePoints());
+}
+
 ofMesh ofxFaceTracker2Landmarks::getImageMesh() const{
     return getMesh(getCvImagePoints());
 }
@@ -95,6 +99,43 @@ ofPolyline ofxFaceTracker2Landmarks::getFeature(Feature feature, vector<T> point
     }
 
     return polyline;
+}
+
+template <class T>
+void ofxFaceTracker2Landmarks::drawFeature(Feature feature, vector<T> points) const {
+    ofPolyline polyline;
+    vector<int> indices = getFeatureIndices(feature);
+
+    ofNoFill();
+    ofSetColor(255);
+    ofSetLineWidth(4);
+    const int lineLength = 10;
+
+    for(int i = 0; i < indices.size(); i++) {
+        int cur = indices[i];
+        glm::vec2 pt = toGlm(points[cur]);
+        // ofFill();
+        // ofSetColor(0, 255, 0);
+        // ofDrawCircle(pt.x, pt.y, 10, 10);
+        ofNoFill();
+        ofSetColor(255);
+        // float r = ofRandomuf();
+        if(i%2==0){
+            ofDrawLine(pt.x, pt.y - lineLength, pt.x, pt.y + lineLength);
+            ofDrawLine(pt.x-lineLength, pt.y, pt.x+lineLength, pt.y);
+        // }else if(r < 0.3){
+        }else{
+            // ofDrawLine(pt.x-lineLength, pt.y - lineLength, pt.x+lineLength, pt.y + lineLength);
+            // ofDrawLine(pt.x+lineLength, pt.y-lineLength, pt.x-lineLength, pt.y+lineLength);
+        }
+        // else{
+
+        // }
+        // ofDrawCircle(pt.x, pt.y, 10, 10);
+        // polyline.addVertex(pt.x, pt.y, 0);
+        // ofDrawCircle(pt.x, pt.y, 10, 10);
+        // polyline.addVertex(pt.x, pt.y, 0);
+    }
 }
 
 vector<int> ofxFaceTracker2Landmarks::consecutive(int start, int end) {

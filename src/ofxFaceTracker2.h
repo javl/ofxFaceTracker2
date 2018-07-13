@@ -38,6 +38,10 @@ public:
     void drawDebug(int x=0, int y=0) const;
     void drawDebug(int x, int y, int w, int h) const;
 
+    /// Draw a debug drawing of the detected face
+    void drawDebugStylized(int x=0, int y=0) const;
+    void drawDebugStylized(int x, int y, int w, int h) const;
+
     /// Draw a debug drawing of the pose of the detected face
     void drawDebugPose();
 

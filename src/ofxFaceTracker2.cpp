@@ -300,6 +300,57 @@ void ofxFaceTracker2::drawDebug(int x, int y, int _w, int _h) const{
     ofPopMatrix();
 }
 
+void ofxFaceTracker2::drawDebugStylized(int x, int y) const{
+    drawDebugStylized(x, y, info.inputWidth, info.inputHeight);
+}
+
+void ofxFaceTracker2::drawDebugStylized(int x, int y, int _w, int _h) const{
+    if(failed) {
+        return;
+    }
+
+    ofPushMatrix();
+    ofPushStyle(); {
+
+        ofTranslate(x,y);
+
+        if(ofGetRectMode() == OF_RECTMODE_CENTER){
+            ofTranslate(-_w/2, -_h/2);
+        }
+
+        if(_w != info.inputWidth || _h != info.inputHeight){
+            ofScale((float)_w/info.inputWidth, (float)_h/info.inputHeight);
+        }
+
+        for (auto instance : getInstances()){
+            ofNoFill();
+
+            instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::LEFT_EYE);
+            instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::RIGHT_EYE);
+            instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::LEFT_EYEBROW);
+            instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::RIGHT_EYEBROW);
+            instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::NOSE_BRIDGE);
+            instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::NOSE_BASE);
+            instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::INNER_MOUTH);
+            instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::OUTER_MOUTH);
+            instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::JAW);
+
+            auto rect = instance.getBoundingBox();
+            auto p = rect.getTopLeft();
+            ofSetColor(255);
+            ofDrawBitmapStringHighlight("face "+ofToString(instance.getLabel()), p.x+4, p.y+14);
+
+            ofPushStyle();
+            ofSetColor(255,0,0);
+            ofNoFill();
+            ofDrawRectangle(rect);
+            ofPopStyle();
+        }
+
+    } ofPopStyle();
+    ofPopMatrix();
+}
+
 void ofxFaceTracker2::drawDebugPose() {
     for(auto instance : getInstances()){
         ofPushView();
