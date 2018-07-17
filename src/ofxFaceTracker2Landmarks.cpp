@@ -13,7 +13,7 @@ ofVec2f ofxFaceTracker2Landmarks::getImagePoint(int i) const {
     ofVec3f p = ofVec3f(shape.part(i).x(),
                         shape.part(i).y(), 0);
     p = p * info.rotationMatrix;
-    
+
     return ofVec2f(p);
 }
 
@@ -39,6 +39,10 @@ vector<cv::Point2f> ofxFaceTracker2Landmarks::getCvImagePoints() const {
 
 ofPolyline ofxFaceTracker2Landmarks::getImageFeature(Feature feature) const {
     return getFeature(feature, getImagePoints());
+}
+
+void ofxFaceTracker2Landmarks::drawImageFeature(Feature feature) const {
+    drawFeature(feature, getImagePoints());
 }
 
 ofMesh ofxFaceTracker2Landmarks::getImageMesh() const{
@@ -93,8 +97,45 @@ ofPolyline ofxFaceTracker2Landmarks::getFeature(Feature feature, vector<T> point
         default:
             break;
     }
-    
+
     return polyline;
+}
+
+template <class T>
+void ofxFaceTracker2Landmarks::drawFeature(Feature feature, vector<T> points) const {
+    ofPolyline polyline;
+    vector<int> indices = getFeatureIndices(feature);
+
+    ofNoFill();
+    ofSetColor(255);
+    ofSetLineWidth(4);
+    const int lineLength = 10;
+
+    for(int i = 0; i < indices.size(); i++) {
+        int cur = indices[i];
+        glm::vec2 pt = toGlm(points[cur]);
+        // ofFill();
+        // ofSetColor(0, 255, 0);
+        // ofDrawCircle(pt.x, pt.y, 10, 10);
+        ofNoFill();
+        ofSetColor(255);
+        // float r = ofRandomuf();
+        if(i%2==0){
+            ofDrawLine(pt.x, pt.y - lineLength, pt.x, pt.y + lineLength);
+            ofDrawLine(pt.x-lineLength, pt.y, pt.x+lineLength, pt.y);
+        // }else if(r < 0.3){
+        }else{
+            // ofDrawLine(pt.x-lineLength, pt.y - lineLength, pt.x+lineLength, pt.y + lineLength);
+            // ofDrawLine(pt.x+lineLength, pt.y-lineLength, pt.x-lineLength, pt.y+lineLength);
+        }
+        // else{
+
+        // }
+        // ofDrawCircle(pt.x, pt.y, 10, 10);
+        // polyline.addVertex(pt.x, pt.y, 0);
+        // ofDrawCircle(pt.x, pt.y, 10, 10);
+        // polyline.addVertex(pt.x, pt.y, 0);
+    }
 }
 
 vector<int> ofxFaceTracker2Landmarks::consecutive(int start, int end) {
@@ -110,27 +151,27 @@ template <class T>
 ofMesh ofxFaceTracker2Landmarks::getMesh(vector<T> points) const {
     cv::Rect rect(0, 0, info.inputWidth, info.inputHeight);
     cv::Subdiv2D subdiv(rect);
-    
+
     for(int i=0;i<points.size();i++){
         if( rect.contains(points[i]) ){
             subdiv.insert(points[i]);
         }
     }
-    
+
     vector<cv::Vec6f> triangleList;
     subdiv.getTriangleList(triangleList);
-    
+
     ofMesh mesh;
     mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-    
+
     for( size_t i = 0; i < triangleList.size(); i++ )
     {
         cv::Vec6f t = triangleList[i];
-        
+
         cv::Point2f pt1 = cv::Point(cvRound(t[0]), cvRound(t[1]));
         cv::Point2f pt2 = cv::Point(cvRound(t[2]), cvRound(t[3]));
         cv::Point2f pt3 = cv::Point(cvRound(t[4]), cvRound(t[5]));
-        
+
         // Draw rectangles completely inside the image.
         if ( rect.contains(pt1) && rect.contains(pt2) && rect.contains(pt3))
         {
@@ -145,6 +186,6 @@ ofMesh ofxFaceTracker2Landmarks::getMesh(vector<T> points) const {
         }
     }
     return mesh;
-    
+
 }
 

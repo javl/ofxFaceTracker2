@@ -1,4 +1,4 @@
-ofxCv
 ofxDlib
-ofxFaceTracker2
+ofxCv
 ofxOpenCv
+ofxFaceTracker2
