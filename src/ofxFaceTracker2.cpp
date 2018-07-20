@@ -286,6 +286,7 @@ void ofxFaceTracker2::drawDebug(int x, int y, int _w, int _h) const{
 
             auto rect = instance.getBoundingBox();
             auto p = rect.getTopLeft();
+            ofSetLineWidth(4);
             ofSetColor(255);
             ofDrawBitmapStringHighlight("face "+ofToString(instance.getLabel()), p.x+4, p.y+14);
 
@@ -335,16 +336,16 @@ void ofxFaceTracker2::drawDebugStylized(int x, int y, int _w, int _h) const{
             instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::OUTER_MOUTH);
             instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::JAW);
 
-            auto rect = instance.getBoundingBox();
-            auto p = rect.getTopLeft();
-            ofSetColor(255);
-            ofDrawBitmapStringHighlight("face "+ofToString(instance.getLabel()), p.x+4, p.y+14);
+            // auto rect = instance.getBoundingBox();
+            // auto p = rect.getTopLeft();
+            // ofSetColor(255);
+            // ofDrawBitmapStringHighlight("face "+ofToString(instance.getLabel()), p.x+4, p.y+14);
 
-            ofPushStyle();
-            ofSetColor(255,0,0);
-            ofNoFill();
-            ofDrawRectangle(rect);
-            ofPopStyle();
+            // ofPushStyle();
+            // ofSetColor(255,0,0);
+            // ofNoFill();
+            // ofDrawRectangle(rect);
+            // ofPopStyle();
         }
 
     } ofPopStyle();
