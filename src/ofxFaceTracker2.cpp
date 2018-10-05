@@ -271,8 +271,12 @@ void ofxFaceTracker2::drawDebug(int x, int y, int _w, int _h) const{
             ofScale((float)_w/info.inputWidth, (float)_h/info.inputHeight);
         }
 
+        ofScale(-1, 1);
+        ofTranslate(-_w, 0);
+
         for (auto instance : getInstances()){
             ofNoFill();
+
 
             instance.getLandmarks().getImageFeature(ofxFaceTracker2Landmarks::LEFT_EYE).draw();
             instance.getLandmarks().getImageFeature(ofxFaceTracker2Landmarks::RIGHT_EYE).draw();
@@ -288,7 +292,7 @@ void ofxFaceTracker2::drawDebug(int x, int y, int _w, int _h) const{
             auto p = rect.getTopLeft();
             ofSetLineWidth(4);
             ofSetColor(255);
-            ofDrawBitmapStringHighlight("face "+ofToString(instance.getLabel()), p.x+4, p.y+14);
+            ofDrawBitmapStringHighlight("face "+ofToString(instance.getLabel()), p.x-4+rect.getWidth(), p.y+14);
 
             ofPushStyle();
             ofSetColor(255,0,0);
@@ -323,8 +327,12 @@ void ofxFaceTracker2::drawDebugStylized(int x, int y, int _w, int _h) const{
             ofScale((float)_w/info.inputWidth, (float)_h/info.inputHeight);
         }
 
+        ofScale(-1, 1);
+        ofTranslate(-_w, 0);
+
         for (auto instance : getInstances()){
             ofNoFill();
+
 
             instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::LEFT_EYE);
             instance.getLandmarks().drawImageFeature(ofxFaceTracker2Landmarks::RIGHT_EYE);
